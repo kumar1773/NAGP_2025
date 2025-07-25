@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - include:
+      id: "initiate_quotes"
+      author: "NeerajKumar"
+      relativeToChangelogFile: true
+      file: quotes_service_changelog.postgresql.sql
