@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk
 
-ENV PROJECT_NAME=quotes-service
+ENV PROJECT_NAME=quotes-app
 ENV PROJECT_VERSION=0.0.1-SNAPSHOT
 USER root
 

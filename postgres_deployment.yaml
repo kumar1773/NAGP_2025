@@ -1,46 +1,14 @@
-# Create a persistent Volume claim
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-db-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----      
-# Secrets for db user/pass
-apiVersion: v1
-kind: Secret
-metadata:
-  name: nagp-db-secret
-type: Opaque
-data:
-  db_username: postgres 
-  db_password: postgres
-
-
----
-# Configmap for DB URL and name
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: nagp-db-config
-data:
-  db_name: nagp_db
-  db_url: jdbc:postgresql://postgres:5432/nagp_db
-  db_driver: org.postgresql.Driver
-  hibernate_dialect: org.hibernate.dialect.PostgreSQLDialect
-
----
 # Postgress deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   replicas: 1
   selector:
     matchLabels:
@@ -50,32 +18,35 @@ spec:
       labels:
         app: postgres
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
-      - name: postgres
-        image: postgres:16
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_DB
-          valueFrom:
-            configMapKeyRef:
-              name: nagp-db-config
-              key: db_name
-        - name: POSTGRES_USER
-          valueFrom:
-            secretKeyRef:
-              name: nagp-db-secret
-              key: db_username
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: nagp-db-secret
-              key: db_password
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: nagp-db-config
+                  key: db_name
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nagp-db-secret
+                  key: db_username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nagp-db-secret
+                  key: db_password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
         volumeMounts:
-        - name: postgres-db-storage
+         - name: postgres-db-storage
           mountPath: /var/lib/postgresql/data
       volumes:
-      - name: postgres-db-storage
+        - name: postgres-db-storage
         persistentVolumeClaim:
           claimName: postgres-db-pvc
 

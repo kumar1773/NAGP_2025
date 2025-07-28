@@ -1,22 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: quotes-service-deployment
+  name: quotes-app-deployment
   labels:
-    app: quotes-service
+    app: quotes-app
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   replicas: 4
   selector:
     matchLabels:
-      app: quotes-service
+      app: quotes-app
   template:
     metadata:
       labels:
-        app: quotes-service
+        app: quotes-app
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
-        - name:  quotes-service
-          image: {DOCKER_IMAGE}
+        - name:  quotes-app
+          image: nagp1507/nagp-quotes-image:0.0.2-SNAPSHOT
           imagePullPolicy: Always
           env:
             - name: DB_URL
@@ -50,6 +56,37 @@ spec:
                   key: db_password
           ports:
             - containerPort: 8080
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 20
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 20
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
+
 ---
 
 apiVersion: v1
@@ -58,7 +95,7 @@ metadata:
   name: quotes-service
 spec:
   selector:
-    app: quotes-service
+    app: quotes-app
   ports:
     - protocol: TCP
       port: 80
