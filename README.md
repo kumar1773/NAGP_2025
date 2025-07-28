@@ -23,4 +23,5 @@ Mandatory_assignment_k8
 5. quotes: contains source doe for quotes application
 6. quotes/docker.yaml: docker file 
 7. quotes/k8s.yaml: deployment file for application
-8. quotes/ingress.yaml Ingress file 
+8. quotes/ingress.yaml Ingress file
+9. To Access quotes service by name inside cluster: http://quotes-service/quotes
