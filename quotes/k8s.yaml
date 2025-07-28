@@ -22,7 +22,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name:  quotes-app
-          image: nagp1507/nagp-quotes-image:0.0.2-SNAPSHOT
+          image: nagp1507/nagp-quotes-image:0.0.3-SNAPSHOT
           imagePullPolicy: Always
           env:
             - name: DB_URL

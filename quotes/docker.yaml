@@ -1,7 +1,7 @@
 FROM eclipse-temurin:17-jdk
 
 ENV PROJECT_NAME=quotes-app
-ENV PROJECT_VERSION=0.0.1-SNAPSHOT
+ENV PROJECT_VERSION=0.0.3-SNAPSHOT
 USER root
 
 RUN groupadd --system appgroup && useradd --system --gid appgroup --create-home appuser

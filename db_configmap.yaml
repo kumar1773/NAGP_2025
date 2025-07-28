@@ -1,0 +1,10 @@
+# Configmap for DB URL and name
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nagp-db-config
+data:
+  db_name: nagp_db
+  db_url: jdbc:postgresql://postgres:5432/nagp_db
+  db_driver: org.postgresql.Driver
+  hibernate_dialect: org.hibernate.dialect.PostgreSQLDialect

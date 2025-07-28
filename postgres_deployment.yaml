@@ -42,16 +42,15 @@ spec:
                   key: db_password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
-        volumeMounts:
-         - name: postgres-db-storage
-          mountPath: /var/lib/postgresql/data
+          volumeMounts:
+            - name: postgres-db-storage
+              mountPath: /var/lib/postgresql/data
       volumes:
         - name: postgres-db-storage
-        persistentVolumeClaim:
-          claimName: postgres-db-pvc
-
+          persistentVolumeClaim:
+            claimName: postgres-db-pvc
 ---
-# Postgres service to expose it by name
+# Postgres Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -61,6 +60,5 @@ spec:
   selector:
     app: postgres
   ports:
-  - port: 5432
-    targetPort: 5432
-
+    - port: 5432
+      targetPort: 5432
